@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLOT TWIST</title>
     
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="The only crypto project where the roadmap is written in invisible ink.">
-    
     <!-- Styles -->
     <style>
         body {
@@ -15,7 +12,7 @@
             background-color: #000;
             color: #fff;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
         }
         h1 {
             font-size: 3em;
@@ -28,10 +25,30 @@
         p {
             font-size: 1.2em;
         }
-        .easter-egg {
-            margin-top: 50px;
-            font-size: 1.1em;
-            color: gold;
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #222;
+            overflow: hidden;
+            margin-top: 20px;
+            border: 2px solid white;
+        }
+        .coin {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: gold;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .score {
+            font-size: 1.5em;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -40,19 +57,46 @@
     <h1>PLOT TWIST</h1>
     <p>The only crypto project where the roadmap is written in invisible ink.</p>
 
-    <img src="plot_twist_crystal_ball.jpg" alt="Plot Twist Meme" class="hero-img" width="500px">
-
     <h2>Buy $TWIST. Or don’t. We’ll probably rug you anyway. 🔮</h2>
 
     <button onclick="window.location.href='https://pump.fun/'" style="padding: 15px; font-size: 1.5em;">Ape In (No Whitelist, No Brains)</button>
 
-    <div class="easter-egg">
-        <p>🎮 Konami Code: Press ↑↑↓↓←→←→BA for a "Secret Bull Run" animation.</p>
-        <p>⏳ Right-clicking won’t save your portfolio.</p>
-        <p>⚠️ Error 404: Gains not found. Try $TWIST.</p>
+    <div class="game-container" id="gameContainer">
+        <p style="position: absolute; top: 10px; left: 10px;">Catch the $TWIST coins!</p>
     </div>
 
-    <!-- Load JavaScript -->
-    <script src="script.js" defer></script>
+    <div class="score">Score: <span id="score">0</span></div>
+
+    <script>
+        let score = 0;
+        function spawnCoin() {
+            let gameContainer = document.getElementById("gameContainer");
+            let coin = document.createElement("div");
+            coin.classList.add("coin");
+            coin.innerHTML = "💰";
+            coin.style.left = Math.random() * (gameContainer.clientWidth - 50) + "px";
+            coin.style.top = "-50px";
+
+            gameContainer.appendChild(coin);
+
+            let fallInterval = setInterval(() => {
+                coin.style.top = parseInt(coin.style.top) + 5 + "px";
+                if (parseInt(coin.style.top) > 400) {
+                    clearInterval(fallInterval);
+                    coin.remove();
+                }
+            }, 50);
+
+            coin.onclick = function () {
+                score++;
+                document.getElementById("score").innerText = score;
+                clearInterval(fallInterval);
+                coin.remove();
+            };
+
+            setTimeout(spawnCoin, Math.random() * 2000 + 500);
+        }
+        spawnCoin();
+    </script>
 </body>
 </html>
