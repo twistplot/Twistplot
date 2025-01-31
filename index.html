@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLOT TWIST</title>
+    <title>PLOT TWIST - The Ultimate Memecoin</title>
     
     <!-- Styles -->
     <style>
@@ -17,13 +17,22 @@
         h1 {
             font-size: 3em;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         h2 {
             font-size: 2em;
             margin-top: 40px;
+            color: #ffcc00;
         }
         p {
             font-size: 1.2em;
+        }
+        .hero-section img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 10px;
         }
         .game-container {
             position: relative;
@@ -33,6 +42,7 @@
             overflow: hidden;
             margin-top: 20px;
             border: 2px solid white;
+            border-radius: 10px;
         }
         .coin {
             position: absolute;
@@ -49,6 +59,20 @@
         .score {
             font-size: 1.5em;
             margin-top: 20px;
+            color: #ffcc00;
+        }
+        .buy-btn {
+            padding: 15px;
+            font-size: 1.5em;
+            background: #ffcc00;
+            color: #000;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .buy-btn:hover {
+            background: #ffaa00;
         }
     </style>
 </head>
@@ -56,10 +80,14 @@
 <body>
     <h1>PLOT TWIST</h1>
     <p>The only crypto project where the roadmap is written in invisible ink.</p>
+    
+    <div class="hero-section">
+        <img src="plot_twist_crystal_ball.jpg" alt="Plot Twist Meme">
+    </div>
 
     <h2>Buy $TWIST. Or don’t. We’ll probably rug you anyway. 🔮</h2>
 
-    <button onclick="window.location.href='https://pump.fun/'" style="padding: 15px; font-size: 1.5em;">Ape In (No Whitelist, No Brains)</button>
+    <button class="buy-btn" onclick="window.location.href='https://pump.fun/'">Ape In (No Whitelist, No Brains)</button>
 
     <div class="game-container" id="gameContainer">
         <p style="position: absolute; top: 10px; left: 10px;">Catch the $TWIST coins!</p>
