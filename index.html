@@ -34,6 +34,21 @@
             margin-top: 20px;
             border-radius: 10px;
         }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery img {
+            max-width: 45%;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
         .game-container {
             position: relative;
             width: 100%;
@@ -88,6 +103,13 @@
     <h2>Buy $TWIST. Or don’t. We’ll probably rug you anyway. 🔮</h2>
 
     <button class="buy-btn" onclick="window.location.href='https://pump.fun/'">Ape In (No Whitelist, No Brains)</button>
+    
+    <div class="gallery">
+        <img src="plot_twist_joker_1.jpg" alt="Joker Image 1">
+        <img src="plot_twist_joker_2.jpg" alt="Joker Image 2">
+        <img src="plot_twist_glitch_ball.jpg" alt="Glitch Ball Image">
+        <img src="plot_twist_fortune.jpg" alt="Fortune Crystal Ball">
+    </div>
 
     <div class="game-container" id="gameContainer">
         <p style="position: absolute; top: 10px; left: 10px;">Catch the $TWIST coins!</p>
