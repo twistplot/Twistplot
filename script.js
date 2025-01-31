@@ -1,3 +1,5 @@
+alert("🚀 script.js is running!");
+console.log("🚀 script.js is loaded!");
 document.addEventListener('keydown', (function() {
     let konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
     let konamiIndex = 0;
