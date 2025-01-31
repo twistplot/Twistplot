@@ -2,3 +2,4 @@
   for = "/*"
   [headers.values]
   Content-Security-Policy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://twist-plot.netlify.app;"
+  X-Content-Type-Options = "nosniff"
