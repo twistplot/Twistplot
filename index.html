@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLOT TWIST - The Ultimate Memecoin</title>
-    
-    <!-- Styles -->
+    <title>PLOT TWIST - Spin to Win!</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -20,11 +18,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        h2 {
-            font-size: 2em;
-            margin-top: 40px;
-            color: #ffcc00;
-        }
         p {
             font-size: 1.2em;
         }
@@ -34,50 +27,19 @@
             margin-top: 20px;
             border-radius: 10px;
         }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        .gallery img {
-            max-width: 45%;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-        .gallery img:hover {
-            transform: scale(1.05);
-        }
-        .game-container {
+        .wheel-container {
             position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 40px auto;
+        }
+        #wheelCanvas {
             width: 100%;
-            height: 400px;
-            background: #222;
-            overflow: hidden;
+            height: auto;
+        }
+        .spin-button {
             margin-top: 20px;
-            border: 2px solid white;
-            border-radius: 10px;
-        }
-        .coin {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: gold;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 50px;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .score {
-            font-size: 1.5em;
-            margin-top: 20px;
-            color: #ffcc00;
-        }
-        .buy-btn {
-            padding: 15px;
+            padding: 15px 30px;
             font-size: 1.5em;
             background: #ffcc00;
             color: #000;
@@ -86,99 +48,108 @@
             border-radius: 5px;
             transition: 0.3s;
         }
-        .buy-btn:hover {
+        .spin-button:hover {
             background: #ffaa00;
         }
-        #message {
+        .prize-display {
             font-size: 1.5em;
             margin-top: 20px;
             color: #ffcc00;
         }
+        .email-input {
+            margin-top: 15px;
+        }
+        .token-payment {
+            margin-top: 15px;
+        }
     </style>
 </head>
-
 <body>
     <h1>PLOT TWIST</h1>
-    <p>The only crypto project where the roadmap is written in invisible ink.</p>
+    <p>Where crypto meets chaos. Spin the Wheel of Fortune and stand a rare chance to win a massive token reward! Each user gets **one free spin**, but if you want more spins, you must pay **1,000 PLOT TWIST Tokens** per spin.</p>
     
     <div class="hero-section">
         <img src="plot_twist_crystal_ball.jpg" alt="Plot Twist Meme">
     </div>
 
-    <h2>Buy $TWIST. Or don’t. We’ll probably rug you anyway. 🔮</h2>
-
-    <button class="buy-btn" onclick="window.location.href='https://pump.fun/'">Ape In (No Whitelist, No Brains)</button>
-    
-    <div class="gallery">
-        <img src="plot_twist_joker_1.jpg" alt="Joker Image 1">
-        <img src="plot_twist_joker_2.jpg" alt="Joker Image 2">
-        <img src="plot_twist_glitch_ball.jpg" alt="Glitch Ball Image">
-        <img src="plot_twist_fortune.jpg" alt="Fortune Crystal Ball">
+    <div class="wheel-container">
+        <canvas id="wheelCanvas" width="300" height="300"></canvas>
     </div>
+    <button class="spin-button" onclick="spinWheel()">Spin for Free (1 Time Only)</button>
+    <button class="spin-button" onclick="payForSpin()">Pay 1,000 $TWIST for More Spins</button>
+    <div class="prize-display" id="prizeDisplay"></div>
+    <input type="email" id="userEmail" class="email-input" placeholder="Enter your email to claim prizes">
+    <button class="spin-button" onclick="saveWinner()">Claim Prize</button>
+    <div class="token-payment">You have <span id="tokenBalance">0</span> $TWIST Tokens</div>
 
-    <div class="game-container" id="gameContainer">
-        <p style="position: absolute; top: 10px; left: 10px;">Catch the $TWIST coins!</p>
-    </div>
+    <audio id="spinSound" src="spin.mp3"></audio>
+    <audio id="winSound" src="win.mp3"></audio>
+    <audio id="loseSound" src="lose.mp3"></audio>
 
-    <div class="score">Score: <span id="score">0</span></div>
-    <div id="message"></div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Winwheel.js/2.7.0/Winwheel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script>
-        // Array of funny messages
-        const messages = [
-            "Cha-ching! You got one!",
-            "Another $TWIST in your pocket!",
-            "You're on fire!",
-            "Keep 'em coming!",
-            "Twist-tastic catch!",
-            "Coin master in action!",
-            "You're a natural!",
-            "Twist and shout!",
-            "Making it rain $TWIST!",
-            "You're unstoppable!"
-        ];
+        let freeSpinUsed = false;
+        let userTokens = 0;
 
-        let score = 0;
+        const spinSound = document.getElementById("spinSound");
+        const winSound = document.getElementById("winSound");
+        const loseSound = document.getElementById("loseSound");
 
-        function spawnCoin() {
-            let gameContainer = document.getElementById("gameContainer");
-            let coin = document.createElement("div");
-            coin.classList.add("coin");
-            coin.innerHTML = "💰";
-            coin.style.left = Math.random() * (gameContainer.clientWidth - 50) + "px";
-            coin.style.top = "-50px";
+        // Create the wheel with very rare winning chances
+        const wheel = new Winwheel({
+            'canvasId': 'wheelCanvas',
+            'numSegments': 8,
+            'segments': [
+                {'fillStyle': '#eae56f', 'text': 'Better luck next time!'},
+                {'fillStyle': '#89f26e', 'text': 'Better luck next time!'},
+                {'fillStyle': '#7de6ef', 'text': 'Better luck next time!'},
+                {'fillStyle': '#e7706f', 'text': 'Better luck next time!'},
+                {'fillStyle': '#eae56f', 'text': 'Better luck next time!'},
+                {'fillStyle': '#89f26e', 'text': 'Better luck next time!'},
+                {'fillStyle': '#7de6ef', 'text': 'Win 10,000 $TWIST Tokens! (Super Rare)'},
+                {'fillStyle': '#e7706f', 'text': 'Win 50,000 $TWIST Tokens! (Ultra Rare)'}
+            ],
+            'animation': {
+                'type': 'spinToStop',
+                'duration': 5,
+                'spins': 12,
+                'callbackBefore': function() { spinSound.play(); },
+                'callbackFinished': displayPrize
+            }
+        });
 
-            gameContainer.appendChild(coin);
-
-            let fallInterval = setInterval(() => {
-                coin.style.top = parseInt(coin.style.top) + 5 + "px";
-                if (parseInt(coin.style.top) > 400) {
-                    clearInterval(fallInterval);
-                    coin.remove();
-                }
-            }, 50);
-
-            coin.onclick = function () {
-                score++;
-                document.getElementById("score").innerText = score;
-                clearInterval(fallInterval);
-                coin.remove();
-
-                // Display a random funny message
-                const randomIndex = Math.floor(Math.random() * messages.length);
-                const messageElement = document.getElementById("message");
-                messageElement.innerText = messages[randomIndex];
-
-                // Clear the message after 2 seconds
-                setTimeout(() => {
-                    messageElement.innerText = "";
-                }, 2000);
-            };
-
-            setTimeout(spawnCoin, Math.random() * 2000 + 500);
+        function spinWheel() {
+            spinSound.play();
+            if (!freeSpinUsed) {
+                freeSpinUsed = true;
+                wheel.startAnimation();
+            } else {
+                alert("You have used your free spin! Use 1,000 $TWIST tokens for more spins.");
+            }
         }
 
-        spawnCoin();
+        function payForSpin() {
+            if (userTokens >= 1000) {
+                userTokens -= 1000;
+                document.getElementById("tokenBalance").innerText = userTokens;
+                spinSound.play();
+                wheel.startAnimation();
+            } else {
+                alert("Not enough $TWIST Tokens! Purchase more to continue spinning.");
+            }
+        }
+
+        function displayPrize(indicatedSegment) {
+            const prizeDisplay = document.getElementById('prizeDisplay');
+            prizeDisplay.textContent = `Congratulations! You won ${indicatedSegment.text}`;
+            if (indicatedSegment.text.includes("Win")) {
+                winSound.play();
+            } else {
+                loseSound.play();
+            }
+        }
     </script>
 </body>
 </html>
+
