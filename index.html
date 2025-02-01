@@ -89,6 +89,11 @@
         .buy-btn:hover {
             background: #ffaa00;
         }
+        #message {
+            font-size: 1.5em;
+            margin-top: 20px;
+            color: #ffcc00;
+        }
     </style>
 </head>
 
@@ -116,9 +121,25 @@
     </div>
 
     <div class="score">Score: <span id="score">0</span></div>
+    <div id="message"></div>
 
     <script>
+        // Array of funny messages
+        const messages = [
+            "Cha-ching! You got one!",
+            "Another $TWIST in your pocket!",
+            "You're on fire!",
+            "Keep 'em coming!",
+            "Twist-tastic catch!",
+            "Coin master in action!",
+            "You're a natural!",
+            "Twist and shout!",
+            "Making it rain $TWIST!",
+            "You're unstoppable!"
+        ];
+
         let score = 0;
+
         function spawnCoin() {
             let gameContainer = document.getElementById("gameContainer");
             let coin = document.createElement("div");
@@ -142,10 +163,21 @@
                 document.getElementById("score").innerText = score;
                 clearInterval(fallInterval);
                 coin.remove();
+
+                // Display a random funny message
+                const randomIndex = Math.floor(Math.random() * messages.length);
+                const messageElement = document.getElementById("message");
+                messageElement.innerText = messages[randomIndex];
+
+                // Clear the message after 2 seconds
+                setTimeout(() => {
+                    messageElement.innerText = "";
+                }, 2000);
             };
 
             setTimeout(spawnCoin, Math.random() * 2000 + 500);
         }
+
         spawnCoin();
     </script>
 </body>
