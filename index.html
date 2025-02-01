@@ -142,3 +142,43 @@
 
         function spawnCoin() {
             let gameContainer = document.getElementById("gameContainer");
+            let coin = document.createElement("div");
+            coin.classList.add("coin");
+            coin.innerHTML = "💰";
+            coin.style.left = Math.random() * (gameContainer.clientWidth - 50) + "px";
+            coin.style.top = "-50px";
+
+            gameContainer.appendChild(coin);
+
+            let fallInterval = setInterval(() => {
+                coin.style.top = parseInt(coin.style.top) + 5 + "px";
+                if (parseInt(coin.style.top) > 400) {
+                    clearInterval(fallInterval);
+                    coin.remove();
+                }
+            }, 50);
+
+            coin.onclick = function () {
+                score++;
+                document.getElementById("score").innerText = score;
+                clearInterval(fallInterval);
+                coin.remove();
+
+                // Display a random funny message
+                const randomIndex = Math.floor(Math.random() * messages.length);
+                const messageElement = document.getElementById("message");
+                messageElement.innerText = messages[randomIndex];
+
+                // Clear the message after 2 seconds
+                setTimeout(() => {
+                    messageElement.innerText = "";
+                }, 2000);
+            };
+
+            setTimeout(spawnCoin, Math.random() * 2000 + 500);
+        }
+
+        spawnCoin();
+    </script>
+</body>
+</html>
